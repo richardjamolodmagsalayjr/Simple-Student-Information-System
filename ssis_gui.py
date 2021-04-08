@@ -109,7 +109,7 @@ def addStudent():
         gender = e_gender.get()
         year = e_year.get()
         course = e_course.get()
-        data = [id_num, name, gender, year, course]
+        data = [id_num, name.upper(), gender.upper(), year.upper(), course.upper()]
         for var in data:
             if var == '':
                 messagebox.showerror("Error", "Data incomplete, complete data to proceed!")
@@ -160,17 +160,25 @@ def search():
         key = e_id.get()
         e_id.delete(0,END)
         count = 0
-        if check_ID(key):
+        if check_ID(key) == False:
+            messagebox.showerror('Invalid ID Number', "Invalid ID format must be- e.g '2019-0001'")
+
+        elif check_ID(key):
             res_frame = LabelFrame(frame, padx=6, pady=10, bg='mint cream', borderwidth='0')
             res_frame.grid(row=3, column=0, columnspan=5, sticky='we')
             res_label = Label(res_frame, text="Result:", font=("Helvetica", 15, "bold"),bg='mint cream')
             res_label.grid(row=0, column=0, padx = 5, pady= 5, sticky="w")
         
             with open("records.csv", 'r', newline='') as records:
-                
                 reader = csv.reader(records)
-                for data in reader:
+                read = list(reader)
+            for data in read:
+                try:
                     if data[0] == key:
+                        res_frame = LabelFrame(frame, padx=6, pady=10, bg='mint cream', borderwidth='0')
+                        res_frame.grid(row=3, column=0, columnspan=5, sticky='we')
+                        res_label = Label(res_frame, text="Result:", font=("Helvetica", 15, "bold"),bg='mint cream')
+                        res_label.grid(row=0, column=0, padx = 5, pady= 5, sticky="w")
                         count +=1
                         label = ['ID number','Student Name','Gender','Year','Course']
                         for i in range(1):
@@ -203,35 +211,29 @@ def search():
                         e_gender.insert(END, data[2].upper())
                         e_year.insert(END, data[3].upper())
                         e_course.insert(END, data[4].upper())          
+                       
+                        edit_button = Button(res_frame, text="Edit Student", padx =20, pady = 10, borderwidth = "2", bg='royal blue1',fg='white', font=("Helvetica", 12, "bold"), command=lambda: edit(e_ID,e_name,e_gender, e_year,e_course))
+                        edit_button.grid(row=4, column=4, pady = 10)
+
+                        del_button = Button(res_frame, text="Delete Student", padx =10, pady = 10, borderwidth = "2", bg='antique white', font=("Helvetica", 11, "bold"), command=lambda: delete(e_ID,e_name,e_gender, e_year,e_course))
+                        del_button.grid(row=4, column=3, pady = 10)
+
+                        edit_tip = Label(res_frame, text="Tip: Change data and click edit button to update student's data", font=("Helvetica", 10, "bold"))
+                        edit_tip.grid(row=4, column=0, columnspan = 3, padx = 5, pady= 5, sticky="w")
                         break
-            
+
+                except:
+                    pass
+            if count == 0:
+                try:
+                    res_frame.destroy()
+                except:
+                    pass
+                messagebox.showerror('ID Number not found', "ID number '{}' is not in the records!".format(key)) 
     
-            edit_button = Button(res_frame, text="Edit Student", padx =20, pady = 10, borderwidth = "2", bg='royal blue1',fg='white', font=("Helvetica", 12, "bold"), command=lambda: edit(e_ID,e_name,e_gender, e_year,e_course))
-            edit_button.grid(row=4, column=4, pady = 10)
+    search_button = Button(frame, text="Search", padx=30, pady=20, borderwidth=2, bg="royal blue1",font=('Helvetica', 12, 'bold'),fg='white', command=get_data)      
+    search_button.grid(row=2, column=3, sticky="e", padx= 40, pady=20)  
 
-            del_button = Button(res_frame, text="Delete Student", padx =10, pady = 10, borderwidth = "2", bg='antique white', font=("Helvetica", 11, "bold"), command=lambda: delete(e_ID,e_name,e_gender, e_year,e_course))
-            del_button.grid(row=4, column=3, pady = 10)
-
-            edit_tip = Label(res_frame, text="Tip: Change data and click edit button to update student's data", font=("Helvetica", 10, "bold"))
-            edit_tip.grid(row=4, column=0, columnspan = 3, padx = 5, pady= 5, sticky="w")
-        
-        
-        if count == 0:
-            if check_ID(key) == False:
-                try:
-                    res_frame.destroy()
-                except:
-                    pass
-                messagebox.showerror('Invalid ID Number', "Invalid ID format must be- e.g '2019-0001'")
-            else:
-                try:
-                    res_frame.destroy()
-                except:
-                    pass
-                messagebox.showerror('ID Number not found', "ID number '{}' is not in the records!".format(key))        
-
-    e_button = Button(frame, text="Search", padx=30, pady=20, borderwidth=2, bg="royal blue1",font=('Helvetica', 12, 'bold'),fg='white', command=get_data)
-    e_button.grid(row=2, column=3, sticky="e", padx= 40, pady=20)    
 #if ID number is edited it will be added as new student and not override the current student data                      
 def edit(id, name, gender, year, course):
    
