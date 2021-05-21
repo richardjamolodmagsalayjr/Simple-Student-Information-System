@@ -3,6 +3,7 @@ from PIL import ImageTk,Image
 import csv
 from tkinter import messagebox
 import re
+#from tkinter.ttk import *
 
 root = Tk()
 root.title("Student Information System")
@@ -36,35 +37,40 @@ def unique_ID(ID):
 def display():
     frame_destroy()
     frame_update()
-    frame.grid(row=1, column=1, rowspan = 6, columnspan = 6, sticky="n")
+    frame.grid(row=1, column=1, rowspan = 6, columnspan = 6, sticky="e")
     
     with open("records.csv", "r", newline='') as records:
         records_reader = csv.reader(records)
         data = list(records_reader)
         display_label = Label(frame, text="List of Students", bg="#EEEEEE", font=("Helvetica", 15, "bold"))
-        display_label.grid(row=0, column=2, padx = 5, pady= 5, sticky="w", columnspan=2)
+        display_label.grid(row=0, column=1, padx = (0,60), pady= 5, sticky="e", columnspan=2)
        
     for i in range(len(data)):
         for j in range(5):
             try:
                 if i == 0:
-                    if j==1  or j==4:
-                        e = Entry(frame, width=30, fg='black', font=('Helvetica',12)) 
+                    if j==1:
+                        e = Entry(frame, width=30, font=('Helvetica',12))
                         e.grid(row=i+1, column=j) 
                         e.insert(END, data[i][j])
+                        e.config(state="disabled", disabledbackground = "white", disabledforeground = "black")
                     else:
-                        e = Entry(frame, width=15, fg='black', font=('Helvetica',12)) 
+                        e = Entry(frame, width=15, font=('Helvetica',12)) 
                         e.grid(row=i+1, column=j) 
                         e.insert(END, data[i][j])
+                        e.config(state="disabled", disabledbackground = "white", disabledforeground = "black")
                     
                 elif i != 0:
-                    e = Entry(frame, width=15, fg='black', font=('Helvetica',12, 'bold')) 
+                    e = Entry(frame, width=15, font=('Helvetica',12, 'bold')) 
                     e.grid(row=i+1, column=j) 
                     e.insert(END, data[i][j].upper())
-                    if j==1  or j==4:
-                        e = Entry(frame, width=30, fg='black', font=('Helvetica',12, 'bold')) 
+                    e.config(state="disabled", disabledbackground = "white", disabledforeground = "black")
+
+                    if j==1:
+                        e = Entry(frame, width=30, font=('Helvetica',12, 'bold')) 
                         e.grid(row=i+1, column=j) 
                         e.insert(END, data[i][j].upper())
+                        e.config(state="disabled", disabledbackground = "white", disabledforeground = "black")
             except:
                 pass
 
@@ -77,24 +83,38 @@ def addStudent():
     func_title = Label(frame, text="Add Student", fg='black', font=('Open Sans',20,"bold"), bg="#F0F0F0")
     func_title.grid(row=0, column=0, padx=5, pady=10)
 
-    e_id = Entry(frame, width=80, borderwidth=2)
-    e_id.grid(row=1, column=1, padx=20, pady=20)
+    e_id = Entry(frame, width=50, borderwidth=2)
+    e_id.grid(row=1, column=1, padx=(0,20), pady=20)
     id_lbl = Label(frame, text="ID Number:", font=("Open Sans", 12), bg="#F0F0F0").grid(row=1, column=0, padx=10, pady=20, sticky='w')
 
-    e_name = Entry(frame,  width=80, borderwidth=2)
-    e_name.grid(row=2, column=1, padx=20, pady=20)
+    e_name = Entry(frame,  width=50, borderwidth=2)
+    e_name.grid(row=2, column=1, padx=(0,20), pady=20)
     name_lbl = Label(frame, text="Name:", font=("Open Sans", 12), bg="#F0F0F0").grid(row=2, column=0, padx=10, pady=20, sticky='w')
 
-    e_gender = Entry(frame,  width=80, borderwidth=2)
-    e_gender.grid(row=3, column=1, padx=20, pady=20)
+    
     gender_lbl = Label(frame, text="Gender:", font=("Open Sans", 12), bg="#F0F0F0").grid(row=3, column=0, padx=10, pady=20, sticky='w')
+    options_1 = ["Male", "Female"]
+    e_gender = StringVar(frame)
+    e_gender.set("Select gender")
 
-    e_year = Entry(frame,  width=80, borderwidth=2)
-    e_year.grid(row=4, column=1, padx=20, pady=20)
+    dropdown_1 = OptionMenu(frame, e_gender, *options_1)
+    dropdown_1.grid(row=3, column=1, padx=(0,20), pady=20, sticky="w")
+
+    # e_year = Entry(frame,  width=80, borderwidth=2)
+    # e_year.grid(row=4, column=1, padx=20, pady=20)
     year_lbl = Label(frame, text="Year:", font=("Open Sans", 12), bg="#F0F0F0").grid(row=4, column=0, padx=10, pady=20, sticky='w')
+   
+    #dropdown box for year, val to 1-5
+    options_2 = ["1","2","3","4","5"]
+    e_year = StringVar(frame)
+    e_year.set("Select year")
 
-    e_course = Entry(frame,  width=80, borderwidth=2)
-    e_course.grid(row=5, column=1, padx=20, pady=20)
+    dropdown_2 = OptionMenu(frame, e_year, *options_2)
+    dropdown_2.grid(row=4, column=1, padx=(0,20), pady=20, sticky="w")
+
+
+    e_course = Entry(frame,  width=50, borderwidth=2)
+    e_course.grid(row=5, column=1, padx=(0,20), pady=20)
     course_lbl = Label(frame, text="Course:", font=("Open Sans", 12), bg="#F0F0F0").grid(row=5, column=0, padx=10, pady=20, sticky='w')
 
     def get_data():
@@ -112,6 +132,11 @@ def addStudent():
                     messagebox.showerror("Error", "Data incomplete, complete data to proceed!")
                     run = False
                     break
+
+                elif gender == "Select gender" or year  == "Select year":
+                    messagebox.showerror("Error", "Data incomplete, complete data to proceed!")
+                    run = False
+                    break
             
                 else:
                     run = True
@@ -123,8 +148,8 @@ def addStudent():
             elif run:           #delete the entries if inputs are valid
                 e_id.delete(0,END)
                 e_name.delete(0,END)
-                e_gender.delete(0,END)
-                e_year.delete(0,END)
+                e_gender.set("Select gender")
+                e_year.set("Select year")
                 e_course.delete(0,END)
 
                 messagebox.showinfo("Student Added", "Added!")
@@ -139,107 +164,89 @@ def addStudent():
     add_button.grid(row=6, column=1, padx=20, pady=30, sticky="e")
 
 #search the key (ID number to see the edit and delete button) 
-def search():
+def search(id):
     frame_destroy()
     frame_update()
     frame.grid(row=1, column=1, rowspan = 3, columnspan=6, sticky="n")
 
-    func_title = Label(frame, text="Search Student", fg='black', font=('Open Sans',20,"bold"), bg="#f0f0f0")
-    func_title.grid(row=0, column=0, padx=10, pady=20)
+    key = id.get()
+    id.delete(0,END)
+    count = 0
+    if check_ID(key) == False:
+        messagebox.showerror('Invalid ID Number', "Invalid ID format must be- e.g '2019-0001'")
 
-    e_id = Entry(frame, width=100, borderwidth=2)
-    e_id.grid(row = 1, column = 1, columnspan =3, padx=25, pady=20)
-    e_id_lbl = Label(frame, text="Student ID number: ", font=('Open Sans',16,"bold"), bg="#f0f0f0")
-    e_id_lbl.grid(row = 1, column = 0, padx=10, pady=20, sticky='e')
-
-    def get_data():
-        try:
-            res_frame.destroy()
-        except:
-            pass
-        key = e_id.get()
-        e_id.delete(0,END)
-        count = 0
-        if check_ID(key) == False:
-            messagebox.showerror('Invalid ID Number', "Invalid ID format must be- e.g '2019-0001'")
-
-        elif check_ID(key):
-            res_frame = LabelFrame(frame, padx=6, pady=10, bg='#f0f0f0', borderwidth='0')
-            res_frame.grid(row=3, column=0, columnspan=5, sticky='we')
-
-            id_label = Label(res_frame, text="")
+    elif check_ID(key):
+        res_frame = LabelFrame(frame, padx=6, pady=10, bg='#f0f0f0', borderwidth='0')
+        res_frame.grid(row=3, column=0, columnspan=5, sticky='we')
         
-            with open("records.csv", 'r', newline='') as records:
-                reader = csv.reader(records)
-                read = list(reader)     #put it in a list to close the r file 
-            for data in read:
-                try:
-                    if data[0] == key:
-                        label = ['Student Name','Gender','Year','Course']
+        with open("records.csv", 'r', newline='') as records:
+            reader = csv.reader(records)
+            read = list(reader)     #put it in a list to close the r file 
+        for data in read:
+            try:
+                if data[0] == key:
+                    label = ['Student Name','Gender','Year','Course']
 
-                        res_frame = LabelFrame(frame, padx=6, pady=10, bg='#f0f0f0', borderwidth='0')
-                        res_frame.grid(row=3, column=0, columnspan=5, sticky='we')
+                    res_frame = LabelFrame(frame, padx=6, pady=10, bg='#f0f0f0', borderwidth='0')
+                    res_frame.grid(row=3, column=0, columnspan=5, sticky='we')
 
-                        res_label = Label(res_frame, text="Result:", font=("Open Sans", 15, "bold"),bg='#f0f0f0')
-                        res_label.grid(row=0, column=0, padx = 5, pady= 5, sticky="w")
+                    res_label = Label(res_frame, text="Result:", font=("Open Sans", 15, "bold"),bg='#f0f0f0')
+                    res_label.grid(row=0, column=0, padx = 5, pady= 5, sticky="w")
 
-                        id_label = Label(res_frame, text= "{}: {}".format("ID number", data[0]), font=("Open Sans", 10, "bold"), bg="#f0f0f0")
-                        id_label.grid(row=1, column=0, padx = 5, pady = 5, sticky="w")
+                    id_label = Label(res_frame, text= "{}: {}".format("ID number", data[0]), font=("Open Sans", 10, "bold"), bg="#f0f0f0")
+                    id_label.grid(row=1, column=0, padx = 5, pady = 5, sticky="w")
 
-                        count +=1 #increment count if search is successful else prompt will pop up if none
+                    count +=1 #increment count if search is successful else prompt will pop up if none
                       
 
-                        for i in range(1): #
-                            for j in range(0,4):
-                                if j==0  or j==3:
-                                    e = Entry(res_frame, width=27, fg='black', font=('Open Sans',12), borderwidth="1") 
-                                    e.grid(row=i+2, column=j) 
-                                    e.insert(END, label[j])
-                                else:
-                                    e = Entry(res_frame, width=20, fg='black', font=('Open Sans',12), borderwidth="1") 
-                                    e.grid(row=i+2, column=j) 
-                                    e.insert(END, label[j])
+                    for i in range(1): #
+                        for j in range(0,4):
+                            if j==0  or j==3:
+                                e = Entry(res_frame, width=27, fg='black', font=('Open Sans',12), borderwidth="1") 
+                                e.grid(row=i+2, column=j) 
+                                e.insert(END, label[j])
+                            else:
+                                e = Entry(res_frame, width=20, fg='black', font=('Open Sans',12), borderwidth="1") 
+                                e.grid(row=i+2, column=j) 
+                                e.insert(END, label[j])
 
-                        #instead of using a loop, each cell is stored in a unique var for editing data purposes                         
-                        e_ID = data[0]
-                        e_name = Entry(res_frame, width=27, fg='black', font=('Open Sans',12, 'bold'), borderwidth="1") 
-                        e_gender = Entry(res_frame, width=20, fg='black', font=('Open Sans',12, 'bold'), borderwidth="1")
-                        e_year = Entry(res_frame, width=20, fg='black', font=('Open Sans',12, 'bold'), borderwidth="1")  
-                        e_course = Entry(res_frame, width=27, fg='black', font=('Open Sans',12, 'bold'), borderwidth="1")
+                    #instead of using a loop, each cell is stored in a unique var for editing data purposes                         
+                    e_ID = data[0]
+                    e_name = Entry(res_frame, width=27, fg='black', font=('Open Sans',12, 'bold'), borderwidth="1") 
+                    e_gender = Entry(res_frame, width=20, fg='black', font=('Open Sans',12, 'bold'), borderwidth="1")
+                    e_year = Entry(res_frame, width=20, fg='black', font=('Open Sans',12, 'bold'), borderwidth="1")  
+                    e_course = Entry(res_frame, width=27, fg='black', font=('Open Sans',12, 'bold'), borderwidth="1")
 
-                        e_name.grid(row=3, column=0)
-                        e_gender.grid(row=3, column=1)
-                        e_year.grid(row=3, column=2)
-                        e_course.grid(row=3, column=3)
+                    e_name.grid(row=3, column=0)
+                    e_gender.grid(row=3, column=1)
+                    e_year.grid(row=3, column=2)
+                    e_course.grid(row=3, column=3)
 
                         
-                        e_name.insert(END, data[1].upper())
-                        e_gender.insert(END, data[2].upper())
-                        e_year.insert(END, data[3].upper())
-                        e_course.insert(END, data[4].upper())          
+                    e_name.insert(END, data[1].upper())
+                    e_gender.insert(END, data[2].upper())
+                    e_year.insert(END, data[3].upper())
+                    e_course.insert(END, data[4].upper())          
                        
-                        edit_button = Button(res_frame, text="Edit Student", padx =20, pady = 10, borderwidth = "2", bg='royal blue1',fg='white', font=("Open Sans", 8, "bold"), command=lambda: edit(e_ID,e_name,e_gender, e_year,e_course))
-                        edit_button.grid(row=4, column=3, pady = 10)
+                    edit_button = Button(res_frame, text="Edit Student", padx =20, pady = 10, borderwidth = "2", bg='royal blue1',fg='white', font=("Open Sans", 8, "bold"), command=lambda: edit(e_ID,e_name,e_gender, e_year,e_course))
+                    edit_button.grid(row=4, column=3, pady = 10)
 
-                        del_button = Button(res_frame, text="Delete Student", padx =18, pady = 10, borderwidth = "2", bg='#CEBFA2', font=("Open Sans", 8, "bold"), command=lambda: delete(e_ID,e_name,e_gender, e_year,e_course))
-                        del_button.grid(row=4, column=2, pady = 10)
+                    del_button = Button(res_frame, text="Delete Student", padx =18, pady = 10, borderwidth = "2", bg='#CE1212', fg = "white", font=("Open Sans", 8, "bold"), command=lambda: delete(e_ID,e_name,e_gender, e_year,e_course))
+                    del_button.grid(row=4, column=2, pady = 10)
 
-                        edit_tip = Label(res_frame, text="Tip: Change data and click edit button to update student's data", font=("Helvetica", 10, "bold"))
-                        edit_tip.grid(row=4, column=0, columnspan = 3, padx = 5, pady= 5, sticky="w")
-                        break
+                    edit_tip = Label(res_frame, text="Tip: Change data and click edit button to update student's data", font=("Helvetica", 10, "bold"))
+                    edit_tip.grid(row=4, column=0, columnspan = 3, padx = 5, pady= 5, sticky="w")
+                    break
 
-                except:
-                    pass
-            if count == 0:
-                try:
-                    res_frame.destroy()
-                except:
-                    pass
-                messagebox.showerror('ID Number not found', "ID number '{}' is not in the records!".format(key)) 
+            except:
+                pass
+        if count == 0:
+            try:
+                res_frame.destroy()
+            except:
+                pass
+            messagebox.showerror('ID Number not found', "ID number '{}' is not in the records!".format(key)) 
     
-    search_button = Button(frame, text="Search", padx=30, pady=20, borderwidth=2, bg="royal blue1",font=('Helvetica', 12, 'bold'),fg='white', command=get_data)      
-    search_button.grid(row=2, column=3, sticky="e", padx= 40, pady=20)  
-
 #if ID number is edited it will be added as new student and not override the current student data                      
 def edit(ID, name, gender, year, course):
    
@@ -262,32 +269,34 @@ def edit(ID, name, gender, year, course):
     messagebox.showinfo("Updated", "Student data is updated!")
 
 def delete(ID, name, gender, year, course):
-    
-    with open("records.csv","r", newline='') as records:
-        reader = csv.reader(records)
-        lst  =list(reader)
+    del_prompt = messagebox.askyesno("Delete Student", "Are you sure to delete Student with ID Number {}".format(ID)) 
 
-        with open("records.csv","w", newline='') as records:
-            writer = csv.writer(records)
+    if del_prompt:  
+        with open("records.csv","r", newline='') as records:
+            reader = csv.reader(records)
+            lst  =list(reader)
+
+            with open("records.csv","w", newline='') as records:
+                writer = csv.writer(records)
             
-            for data in lst:
-                try:
-                    if data[0] != ID:
-                        writer.writerow(data)
-                except:
-                    pass
+                for data in lst:
+                    try:
+                        if data[0] != ID:
+                            writer.writerow(data)
+                    except:
+                        pass
     
-    name.delete(0,END)
-    gender.delete(0,END)
-    year.delete(0,END)
-    course.delete(0,END)
+        name.delete(0,END)
+        gender.delete(0,END)
+        year.delete(0,END)
+        course.delete(0,END)
 
-    try: #use try exception since res_frame is not initialized or defined within this function, destroy only if necessary
-        res_frame.destroy()
-    except:
-        pass
+        try: #use try exception since res_frame is not initialized or defined within this function, destroy only if necessary
+            res_frame.destroy()
+        except:
+            pass
 
-    messagebox.showinfo("Deleted", "Student deleted")
+        messagebox.showinfo("Deleted", "Student deleted")
 
 
 
@@ -308,8 +317,8 @@ header.grid(row=0, column=0, columnspan=2, sticky = "we")
 main_frame.grid(row=1, column=1, sticky = 'n', pady = 50)
 
 #title in located at the header
-title = Label(header, text='Student Information System', font=("Open Sans", 17, "bold"), bg="#828284", fg="white", padx = 50, pady=20)
-title.grid(row=0, column = 0)
+title = Label(header, text='Student Information System', font=("Open Sans", 17, "bold"), bg="#828284", fg="white", padx = 50, pady=20 )
+title.grid(row=0, column = 0, columnspan=3)
 
 #button icons
 
@@ -321,21 +330,21 @@ icon_2  = ImageTk.PhotoImage(Image.open("images/add_icon.png"))
 icon_lbl_2 = Label(sidebar, image=icon_2)
 icon_lbl_2.grid(row=2, column=0, pady=(50,0))
 
-icon_3  = ImageTk.PhotoImage(Image.open("images/search_icon.png"))
-icon_lbl_3 = Label(sidebar, image=icon_3)
-icon_lbl_3.grid(row=4, column=0, pady=(50,0))
+#icon_3  = ImageTk.PhotoImage(Image.open("images/search_icon.png"))
+#icon_lbl_3 = Label(sidebar, image=icon_3)
+#icon_lbl_3.grid(row=4, column=0, pady=(50,0))
 
 display_button = Button(sidebar, text="Display\nStudents",  padx = 30, bg='#EEEEEE', font=("Open Sans", 12, "bold"), borderwidth = 0, command=display) 
 add_button = Button(sidebar, text="Add\nStudent",  bg='#EEEEEE', padx = 30,font=("Open Sans", 12, "bold"), borderwidth = 0, command=addStudent)
-search_button = Button(sidebar, text="Search\nStudent", bg='#EEEEEE', padx = 30, font=("Open Sans", 12, "bold"), borderwidth = 0, command = search)
+
+search_button = Button(header, text="Search", bg='royalblue1',fg="white", padx = 20, font=("Open Sans", 10, "bold"), borderwidth = 0, command = lambda:search(search_entry))
+search_entry = Entry(header, width=10,fg='black', font=('Open Sans',12, 'bold'), borderwidth="2")
+search_label = Label(header, text="ID Number: ", bg='#828284', font=("Open Sans", 12, "bold"), fg='white')
 
 display_button.grid(row=1, column=0)
 add_button.grid(row=3, column=0)
-search_button.grid(row=5, column=0)
-
-
+search_label.grid(row=0, column=3, padx=(450,0))
+search_entry.grid(row=0, column=4, padx=(2,0))
+search_button.grid(row=0, column=5,padx=(5,0))
 
 root.mainloop()
-
-
-
