@@ -172,6 +172,7 @@ def search(id):
     key = id.get()
     id.delete(0,END)
     count = 0
+    
     if check_ID(key) == False:
         messagebox.showerror('Invalid ID Number', "Invalid ID format must be- e.g '2019-0001'")
 
