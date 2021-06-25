@@ -201,7 +201,7 @@ def edit_course(course_code, course_name, original_course_code, edit_button, del
     edit_prompt = messagebox.askyesno("Edit course data", "Are you sure to make these changes?")
     if edit_prompt:
         try:
-            query = "UPDATE student SET code = %s, course_name = %s WHERE student_id = %s"
+            query = "UPDATE courses SET code = %s, course_name = %s WHERE code = %s"
             query_param = (course_code.get(), course_name.get(), original_course_code)
             cursor.execute(query, query_param)
             database.commit()
@@ -210,7 +210,7 @@ def edit_course(course_code, course_name, original_course_code, edit_button, del
             values = table.item(selected, text = "", values=(course_code.get(), course_name.get()))
             course_code.delete(0, END)
             course_name.delete(0, END)
-           
+            original_course_code = ""
             del_button["state"] = DISABLED
             edit_button["state"] = DISABLED
         except:
@@ -433,6 +433,7 @@ def addStudent():
                 gender_dropdown.current(0)
                 year_dropdown.current(0)
                 course_dropdown.current(0)
+                e_others.delete(0,END)
                 try:    #used try and except here because error is thrown if gender dropdown is not male or female
                     e_others.grid_forget()
                 except:
@@ -623,7 +624,7 @@ display_course_button.grid(row=5, column=0, pady=(0,15))
 add_course_button.grid(row=7, column=0, pady=(0,15))
 
 
-search_button = Button(header, text="Search", bg='royalblue1',fg="white", padx = 20, font=("Open Sans", 10, "bold"), borderwidth = 0, command = lambda: search(search_entry))
+search_button = Button(header, text="Search", bg='royalblue1',fg="white", padx = 20, font=("Open Sans", 10, "bold"), borderwidth = 1, command = lambda: search(search_entry))
 search_entry = Entry(header, width=20,fg='black', font=('Open Sans',12, 'bold'), borderwidth="1")
 search_label = Label(header, text="Search Student: ", bg='#cbcac8', font=("Open Sans", 12, "bold"), fg='black')
 search_label.grid(row=0, column=3, padx=(400,0))
